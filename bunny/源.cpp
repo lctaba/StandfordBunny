@@ -31,11 +31,11 @@ int buttonMode = 1;
 //放大倍数
 double scaleTime = 1;
 //选中的点的名称
-GLuint names = 100000000;
+GLuint name = 100000000;
 //选中的点的参数
 GLfloat color_selected[] = { 1.0f,0.0f,0.0f };
 GLfloat color_unselected[] = { 0.0f,0.0f,1.0f };
-
+bool pickMode = false;
 
 void readPly(string path) {
 	ifstream in;
@@ -78,37 +78,143 @@ void readPly(string path) {
 	in.close();
 }
 
+//void drawPoints() {
+//	//为什么要放在里面？
+////不然的话选取的时候是没有变换的，不准
+//
+//
+////先平移在旋转
+////为什么不用这个，光源也移动
+////glDisable(GL_LIGHT0);
+//	glTranslatef(dTransX + oldX, -dTransY - oldY, 0);
+//	//为什么不用移动视点？
+//
+//	//让光源在图中不动
+//	/*GLfloat light_position[] = { 20,-10,20,0 };
+//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//	glEnable(GL_LIGHT0);*/
+//
+//
+//	glRotatef(dy, 1, 0, 0);
+//	glRotatef(dx, 0, 1, 0);
+//
+//
+//	//glLoadIdentity();
+//
+//	glScalef(scaleTime, scaleTime, scaleTime);
+//
+//
+//	//if (keyboardMode == 1) {
+//	//	glScalef(scaleTime, scaleTime, scaleTime);
+//	//}
+//	//else {
+//	//	glScalef(scaleTime, 0.5, 0.5);
+//	//}
+//
+//
+//	//让光源在图中不动
+//	/*GLfloat light_position[] = { 0,0,20,1 };
+//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//	glEnable(GL_LIGHT0);*/
+//
+//
+//	glPointSize(5.0f);
+//
+//	for (int i = 0; i < pointNumber; i++) {
+//		//选取模式的栈
+//
+//			glLoadName(i + 1);
+//			//glColor3fv((names == i) ? color_selected : color_unselected);
+//			//if (names == i) {
+//				//glColor3fv(color_selected);
+//				//glPointSize(0.0001f);
+//
+//
+//		glBegin(GL_POINTS);
+//		glVertex3f(bunnyPoint[i][0], bunnyPoint[i][1], bunnyPoint[i][2] - 7);
+//		glEnd();
+//	}
+//}
+
+
 void drawBunny(GLenum mode) {
-	//glBegin(GL_POINTS);
-	//for (int i = 0; i < pointNumber; i++) {
-	//	//选取模式的栈
-	//	if (mode == GL_SELECT) {
-	//		glLoadName(i);
-	//		//glColor3fv((names == i) ? color_selected : color_unselected);
-	//		//if (names == i) {
+	//为什么要放在里面？
+	//不然的话选取的时候是没有变换的，不准
 
-	//			//glColor3fv(color_selected);
-	//			//glPointSize(0.0001f);
+	
+		//先平移在旋转
+	//为什么不用这个，光源也移动
+	//glDisable(GL_LIGHT0);
+		glTranslatef(dTransX + oldX, -dTransY - oldY, 0);
+		//为什么不用移动视点？
 
-	//		glVertex3f(bunnyPoint[i][0], bunnyPoint[i][1], bunnyPoint[i][2] - 7);
+		//让光源在图中不动
+		/*GLfloat light_position[] = { 20,-10,20,0 };
+		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+		glEnable(GL_LIGHT0);*/
 
-	//	}
-	//}
-	//glEnd();
 
-	if (names >= 0 && names <= 34833 /*&& mode == GL_SELECT*/) {
-		
-		glPointSize(100.0f);
-		glBegin(GL_POINTS);
-		glVertex3f(bunnyPoint[names][0], bunnyPoint[names][1], bunnyPoint[names][2] - 7);
-		//glVertex3f(bunnyPoint[1][0], bunnyPoint[1][1], bunnyPoint[1][2] - 7);
-		glEnd();
+		glRotatef(dy, 1, 0, 0);
+		glRotatef(dx, 0, 1, 0);
+
+
+		//glLoadIdentity();
+
+		glScalef(scaleTime, scaleTime, scaleTime);
+
+
+		//if (keyboardMode == 1) {
+		//	glScalef(scaleTime, scaleTime, scaleTime);
+		//}
+		//else {
+		//	glScalef(scaleTime, 0.5, 0.5);
+		//}
+
+
+		//让光源在图中不动
+		/*GLfloat light_position[] = { 0,0,20,1 };
+		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+		glEnable(GL_LIGHT0);*/
+	if (pickMode) {
+
+		glPointSize(1.0f);
+
+		for (int i = 0; i < pointNumber; i++) {
+			//选取模式的栈
+
+			if (mode == GL_SELECT) {
+				glLoadName(i + 1);
+				//glColor3fv((names == i) ? color_selected : color_unselected);
+				//if (names == i) {
+					//glColor3fv(color_selected);
+					//glPointSize(0.0001f);
+			}
+
+
+			glBegin(GL_POINTS);
+			glVertex3f(bunnyPoint[i][0], bunnyPoint[i][1], bunnyPoint[i][2] - 7);
+			glEnd();
+		}
+
+
+		if (name >= 1 && name <= 34834 /*&& mode == GL_SELECT*/) {
+
+			glPointSize(5.0f);
+			glBegin(GL_POINTS);
+			glVertex3f(bunnyPoint[name - 1][0], bunnyPoint[name - 1][1], bunnyPoint[name - 1][2] - 7);
+			//glVertex3f(bunnyPoint[1][0], bunnyPoint[1][1], bunnyPoint[1][2] - 7);
+			glEnd();
+		}
 	}
-
 
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < surfaceNumnber; i++) {
 		//glBegin(GL_POLYGON);
+
+		//if (mode == GL_SELECT) {
+		//	glLoadName(i + 1);
+		//}
+			//glBegin(GL_TRIANGLES);
 			GLfloat a[3] = { bunnyPoint[bunnysurface[i][0]][0], bunnyPoint[bunnysurface[i][0]][1], bunnyPoint[bunnysurface[i][0]][2]-7 };
 			GLfloat b[3] = { bunnyPoint[bunnysurface[i][1]][0], bunnyPoint[bunnysurface[i][1]][1], bunnyPoint[bunnysurface[i][1]][2]-7 };
 			GLfloat c[3] = { bunnyPoint[bunnysurface[i][2]][0], bunnyPoint[bunnysurface[i][2]][1], bunnyPoint[bunnysurface[i][2]][2]-7 };
@@ -131,13 +237,11 @@ void drawBunny(GLenum mode) {
 			glVertex3f(b[0], b[1], b[2]);
 			glVertex3f(c[0], c[1], c[2]);
 			
-
+			
 		//glEnd();
 	}
 	glEnd();
 }
-
-
 
 void myinit()
 {
@@ -202,7 +306,6 @@ void myinit()
 	//glEnable(GL_DEPTH_TEST); //打开深度测试
 }
 
-
 void display() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glRotatef(150, 0.0, 1.0, 0.0);
@@ -230,42 +333,44 @@ void display() {
 	
 	//透视投影的视点
 	
+
+
 	gluLookAt(0, 0, r, 0, 0, -1, 0, 1, 0);
 
 
-	//先平移在旋转
-	//为什么不用这个，光源也移动
-//glDisable(GL_LIGHT0);
-	glTranslatef(dTransX + oldX, -dTransY - oldY, 0);
-	//为什么不用移动视点？
-	
-	//让光源在图中不动
-	/*GLfloat light_position[] = { 20,-10,20,0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glEnable(GL_LIGHT0);*/
-
-
-	glRotatef(dy, 1, 0, 0);
-	glRotatef(dx, 0, 1, 0);
-
-
-	//glLoadIdentity();
-
-	glScalef(scaleTime, scaleTime, scaleTime);
-
-
-	//if (keyboardMode == 1) {
-	//	glScalef(scaleTime, scaleTime, scaleTime);
-	//}
-	//else {
-	//	glScalef(scaleTime, 0.5, 0.5);
-	//}
-		
-
-	//让光源在图中不动
-	/*GLfloat light_position[] = { 0,0,20,1 };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glEnable(GL_LIGHT0);*/
+//	//先平移在旋转
+//	//为什么不用这个，光源也移动
+////glDisable(GL_LIGHT0);
+//	glTranslatef(dTransX + oldX, -dTransY - oldY, 0);
+//	//为什么不用移动视点？
+//
+//	//让光源在图中不动
+//	/*GLfloat light_position[] = { 20,-10,20,0 };
+//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//	glEnable(GL_LIGHT0);*/
+//
+//
+//	glRotatef(dy, 1, 0, 0);
+//	glRotatef(dx, 0, 1, 0);
+//
+//
+//	//glLoadIdentity();
+//
+//	glScalef(scaleTime, scaleTime, scaleTime);
+//
+//
+//	//if (keyboardMode == 1) {
+//	//	glScalef(scaleTime, scaleTime, scaleTime);
+//	//}
+//	//else {
+//	//	glScalef(scaleTime, 0.5, 0.5);
+//	//}
+//
+//
+//	//让光源在图中不动
+//	/*GLfloat light_position[] = { 0,0,20,1 };
+//	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//	glEnable(GL_LIGHT0);*/
 
 
 
@@ -312,26 +417,44 @@ void myReshape(int w, int h)
 	//display();
 }
 
-
 void processHits(GLint hits, GLuint buffer[])
 {
+	cout << "选中了" << hits << "个点" << endl;
+	int names;
+	int maxDeep = -1000000000;
+	for (int i = 0; i < hits; i++) {
+		int tempDeep = buffer[i * 4 + 1];
+		if (tempDeep > maxDeep) {
+			name = buffer[i * 4 + 3] > 34833 ? name : buffer[i * 4 + 3];
+			maxDeep = tempDeep;
+		}
+	}
+	if (hits > 0) {
+		cout << "选中的是第" << name << "个点，它的Z为" << maxDeep << endl;
+	}
+	
 	//unsigned int i, j;
 	//GLuint *ptr;
 
 	//printf("hits = %d\n", hits);
 	//ptr = (GLuint *)buffer;
 
-	if(names != -1) names = buffer[3];
-	//hits表示有多少个对象被选中
+	//
+
+	////if(names != -1) names = buffer[3];
+	////hits表示有多少个对象被选中
 	//for (i = 0; i < hits; i++)
 	//{ /*  for each hit  */
 	//   //选中发生时名称堆栈中的名称数目
-	//	names = *ptr;
-	//	printf("选中发生时名称堆栈中的名称数目:%d\n", names); ptr++;
-
+	//	//names = *ptr;
+	//	int tempDeep = *(ptr+1);
+	//	if (tempDeep > maxDeep) {
+	//		name = *ptr;
+	//	}
+	//	/*printf("选中发生时名称堆栈中的名称数目:%d\n", names); ptr++;
 	//	printf(" Z坐标的最小值:%u\n", *ptr); ptr++;
-	//	printf(" Z坐标的最大值:%u\n", *ptr); ptr++;
-
+	//	printf(" Z坐标的最大值:%u\n", *ptr); ptr++;*/
+	//	ptr += 3;
 
 	//	printf("选中的内容:");
 	//	for (j = 0; j < names; j++)
@@ -342,9 +465,6 @@ void processHits(GLint hits, GLuint buffer[])
 	//	printf("\n");
 	//}
 }
-
-
-
 
 #define SIZE 512
 
@@ -424,7 +544,7 @@ void keyboard(unsigned char key,int x,int y) {
 		glMatrixMode(GL_PROJECTION);//选择视景体
 		glPushMatrix();
 		glLoadIdentity();//注意矩阵堆栈执行的顺序
-		gluPickMatrix(X, viewport[3] - Y, 5, 5, viewport);//定义以鼠标位置为中心，大小为5个像素的新视景体
+		gluPickMatrix(x, viewport[3] - y, 3, 3, viewport);//定义以鼠标位置为中心，大小为5个像素的新视景体
 
 		/*float m[16];
 		glGetFloatv(GL_PROJECTION_MATRIX, m);*/
@@ -432,28 +552,32 @@ void keyboard(unsigned char key,int x,int y) {
 		//glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
 		glOrtho(-20.0, 20.0, -20.0, 20.0, -100, 100.0);
 		//gluPerspective(60, 1, 1, 100);
+
+
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+
+
 		//gluLookAt(0, 0, r, 0, 0, -1, 0, 1, 0);
 
-		glBegin(GL_POINTS);
-		for (int i = 0; i < pointNumber; i++) {
-			//选取模式的栈
-			glLoadName(i);
-			//glColor3fv((names == i) ? color_selected : color_unselected);
-			//if (names == i) {
+		//glBegin(GL_POINTS);
+		//for (int i = 0; i < pointNumber; i++) {
+		//	//选取模式的栈
+		//	glLoadName(i);
+		//	//glColor3fv((names == i) ? color_selected : color_unselected);
+		//	//if (names == i) {
 
-				//glColor3fv(color_selected);
-				//glPointSize(0.0001f);
+		//		//glColor3fv(color_selected);
+		//		//glPointSize(0.0001f);
 
-			glVertex3f(bunnyPoint[i][0], bunnyPoint[i][1], bunnyPoint[i][2] - 7);
+		//	glVertex3f(bunnyPoint[i][0], bunnyPoint[i][1], bunnyPoint[i][2] - 7);
 
-		}
-		glEnd();
+		//}
+		//glEnd();
+		//
 		
-		
-		//drawBunny(GL_SELECT);
-
+		drawBunny(GL_SELECT);
+		//drawPoints();
 
 		glMatrixMode(GL_PROJECTION);//返回并出栈
 
@@ -469,7 +593,7 @@ void keyboard(unsigned char key,int x,int y) {
 		if (hits > 0) {
 			processHits(hits, selectBuf);
 		}
-		glutPostRedisplay();
+ 		glutPostRedisplay();
 
 		//double modelview[16], projection[16];
 		//int viewport[4];
@@ -485,8 +609,10 @@ void keyboard(unsigned char key,int x,int y) {
 
 	}
 	else if (key == 'a') {
-		glRenderMode(GL_RENDER);
-		drawBunny(GL_RENDER);
+		//glRenderMode(GL_RENDER);
+		//drawBunny(GL_RENDER);
+		
+		pickMode = !pickMode;
 		glutPostRedisplay();
 	}
 }
